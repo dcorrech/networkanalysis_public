@@ -11,7 +11,7 @@ db = MySQLdb.connect(host="localhost",  # your host
                      passwd="xxxxxxx",     # password
                      db="cogs402")   # name of the database
 
-def get_avg_inf_spread(net, table, flag):
+def get_avg_inf_spread(net, table, flag): # returns average influence spread for given network
     print(table)
     if flag == 'pol':
         x = 0.01
@@ -31,7 +31,7 @@ def get_avg_inf_spread(net, table, flag):
 
     return avg
 
-def get_inf_mat(net, table, thresh, flag):
+def get_inf_mat(net, table, thresh, flag): # Implements modified data-based influence spread algorithm from Goyal et al (2011)
     #list of all actions in action trace
     a_list = get_a_list(table, flag)
     active_nodes = get_active_nodes(table, flag)
@@ -131,7 +131,7 @@ def get_inf_mat(net, table, thresh, flag):
 
     return [uc_arr, uc]
 
-def get_active_nodes(table, flag):
+def get_active_nodes(table, flag): # returns nodes who have taken at least one action from network DB
     cur = db.cursor()
     if (flag == 'sup'):
         cur.execute("select distinct supporter_id from " + table)
@@ -153,7 +153,7 @@ def get_active_nodes(table, flag):
 
     return node_list
 
-def get_a_list(table, flag):
+def get_a_list(table, flag): # returns action list for each supporter, and tweet list for each politician
     if (flag == 'sup'):
         cur = db.cursor()
         cur.execute("select distinct c_name from " + table)
@@ -169,13 +169,13 @@ def get_a_list(table, flag):
     
     return a_list
 
-def get_at(table, col, flag):
+def get_at(table, col, flag): # returns full action trace from DB or npy file
     if (flag == 'sup'):
         # fetch data from MySQL
         cur = db.cursor()
         cur.execute("select count(*) from " + table)
         size_tab = int(cur.fetchall()[0][0])
-        cur.execute("select c_name, sub_datetime, supporter_id from " + table + " where c_name = '" + col + "' order by sub_datetime") # maybe order by c_name to optimize?
+        cur.execute("select c_name, sub_datetime, supporter_id from " + table + " where c_name = '" + col + "' order by sub_datetime")
         
         mat = np.chararray((size_tab,3), itemsize=100)
 
